@@ -1,0 +1,55 @@
+
+# This is the user-interface definition of a Shiny web application.
+# You can find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com
+#
+
+library(dygraphs)
+library(shiny)
+
+shinyUI(fluidPage(
+  titlePanel("MSCI Index"),
+  
+
+    
+    mainPanel(
+      dygraphOutput("mscigraph"))
+  ))
+
+
+
+
+
+
+
+
+
+# You can find out more about building applications with Shiny here:
+#
+# http://shiny.rstudio.com
+#
+
+library(shiny)
+library(dygraphs)
+library(dplyr)
+library(xts)
+
+shinyServer(function(input, output) {
+  world <- read.csv("world.csv") 
+  world$msci <- as.numeric(gsub(",","",world$msci))  
+  
+  #the first graph which is price over time (input: variety, count, date)
+  output$mscigraph <- renderDygraph({
+#     if (is.null(input$productname) || is.null(input$count)) return(NULL)
+#     filtered <- filter(data,
+#                        Variety == input$productname,
+#                        Count == input$count )
+    xts(world$msci, as.Date(world$date, format = "%m/%d/%Y")) %>%
+      dygraph(main = "pigudawang") %>%
+      dyRangeSelector()
+  })
+  
+})
+
+
